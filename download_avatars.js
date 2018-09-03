@@ -2,6 +2,10 @@ const request = require('request');
 const fs = require('fs');
 const secrets = require('dotenv').config().parsed;
 
+if (secrets === undefined) {
+  throw new Error('No .env file configured');
+}
+
 const repo = process.argv[3];
 const owner = process.argv[2];
 
@@ -17,7 +21,6 @@ function getRepoContributors(repoOwner, repoName, callback) {
   };
   request(options, (err, res, body) => {
     const data = JSON.parse(body);
-    console.log(data);
     callback(err, data);
   });
 }
@@ -32,7 +35,7 @@ function downloadImageByURL(url, filePath) {
 
 const getAvatar = (err, data) => {
   if (err) {
-    console.log(err);
+    throw err;
   }
   data.forEach((obj) => {
     const file = `./downloads/${obj.login}.jpg`;
@@ -46,3 +49,11 @@ if (!(owner) || !(repo)) {
 } else {
   getRepoContributors(owner, repo, getAvatar);
 }
+
+// TO IMPLEMENT ERROR HANDLING
+// the folder to store images to does not exist
+// an incorrect number of arguments given to program(0, 1, 3, etc.)
+// the provided owner / repo does not exist
+// the.env file is missing
+// the.env file is missing information
+// the.env file contains incorrect credentials
