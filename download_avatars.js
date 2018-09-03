@@ -2,6 +2,9 @@ const request = require('request');
 const fs = require('fs');
 const secrets = require('./secrets');
 
+const repo = process.argv[3];
+const owner = process.argv[2];
+
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 function getRepoContributors(repoOwner, repoName, callback) {
@@ -20,11 +23,6 @@ function getRepoContributors(repoOwner, repoName, callback) {
 
 function downloadImageByURL(url, filePath) {
   request.get(url)
-    // .on('response', (response) => {
-    //   console.log('Response Status Code: ', response.statusCode);
-    //   console.log('Response Message: ', response.statusMessage);
-    //   console.log('Response Content Type: ', response.headers['content-type']);
-    // })
     .on('end', () => {
       console.log(`Downloaded avatar from: ${url}`);
     })
@@ -36,10 +34,14 @@ const getAvatar = (err, data) => {
     console.log(err);
   }
   data.map((obj) => {
-    const file = `./avatars/${obj.login}.jpg`;
+    const file = `./downloads/${obj.login}.jpg`;
     const url = obj.avatar_url;
     downloadImageByURL(url, file);
   });
 };
 
-getRepoContributors('jquery', 'jquery', getAvatar);
+if (!(owner) || !(repo)) {
+  console.log('User or Repo not specified!');
+} else {
+  getRepoContributors(owner, repo, getAvatar);
+}
