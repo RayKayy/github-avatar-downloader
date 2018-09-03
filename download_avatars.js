@@ -2,15 +2,25 @@ const request = require('request');
 const fs = require('fs');
 const secrets = require('dotenv').config().parsed;
 
+// Check for correctly configured .env.
 if (secrets === undefined) {
-  throw new Error('No .env file configured');
+  throw new Error('.env file is missing');
+} else if (secrets.GITHUB_TOKEN === undefined) {
+  throw new Error('Missing GitHub token within .env file.');
 }
 
-const repo = process.argv[3];
-const owner = process.argv[2];
+// Check for correct number of arguments.
+const args = process.argv.slice(2);
+
+if (!(args.length === 2)) {
+  throw new Error('Invalid number of arguments!');
+}
+const repo = args[0];
+const owner = args[1];
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
+// Main function to retrieve avatar jpg from repo contributers.
 function getRepoContributors(repoOwner, repoName, callback) {
   const options = {
     url: `https://api.github.com/repos/${repoOwner}/${repoName}/contributors`,
@@ -21,6 +31,10 @@ function getRepoContributors(repoOwner, repoName, callback) {
   };
   request(options, (err, res, body) => {
     const data = JSON.parse(body);
+    // Check if retrieval from API successful.
+    if (data.message) {
+      throw new Error(data.message);
+    }
     callback(err, data);
   });
 }
@@ -44,16 +58,5 @@ const getAvatar = (err, data) => {
   });
 };
 
-if (!(owner) || !(repo)) {
-  console.log('User or Repo not specified!');
-} else {
-  getRepoContributors(owner, repo, getAvatar);
-}
-
-// TO IMPLEMENT ERROR HANDLING
-// the folder to store images to does not exist
-// an incorrect number of arguments given to program(0, 1, 3, etc.)
-// the provided owner / repo does not exist
-// the.env file is missing
-// the.env file is missing information
-// the.env file contains incorrect credentials
+// Run program based on parameters.
+getRepoContributors(owner, repo, getAvatar);
