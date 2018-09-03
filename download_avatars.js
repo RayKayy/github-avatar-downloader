@@ -1,6 +1,6 @@
 const request = require('request');
 const fs = require('fs');
-const secrets = require('./secrets');
+const secrets = require('dotenv').config().parsed;
 
 const repo = process.argv[3];
 const owner = process.argv[2];
@@ -17,6 +17,7 @@ function getRepoContributors(repoOwner, repoName, callback) {
   };
   request(options, (err, res, body) => {
     const data = JSON.parse(body);
+    console.log(data);
     callback(err, data);
   });
 }
