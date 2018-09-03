@@ -28,13 +28,13 @@ function downloadImageByURL(url, filePath) {
     .pipe(fs.createWriteStream(filePath));
 }
 
-const getAvatarUrl = (err, data) => {
+const getAvatar = (err, data) => {
   console.log(err);
   data.map((obj) => {
-    console.log(obj.avatar_url);
-    return obj.avatar_url;
+    const file = `./avatars/${obj.login}.jpg`;
+    const url = obj.avatar_url;
+    downloadImageByURL(url, file);
   });
 };
 
-getRepoContributors('jquery', 'jquery', getAvatarUrl);
-downloadImageByURL('https://avatars0.githubusercontent.com/u/1615?v=4', './avatar.jpg');
+getRepoContributors('jquery', 'jquery', getAvatar);
