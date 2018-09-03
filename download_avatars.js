@@ -33,7 +33,7 @@ const getAvatar = (err, data) => {
   if (err) {
     console.log(err);
   }
-  data.map((obj) => {
+  data.forEach((obj) => {
     const file = `./downloads/${obj.login}.jpg`;
     const url = obj.avatar_url;
     downloadImageByURL(url, file);
