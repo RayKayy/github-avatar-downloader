@@ -20,16 +20,21 @@ function getRepoContributors(repoOwner, repoName, callback) {
 
 function downloadImageByURL(url, filePath) {
   request.get(url)
-    .on('response', (response) => {
-      console.log('Response Status Code: ', response.statusCode);
-      console.log('Response Message: ', response.statusMessage);
-      console.log('Response Content Type: ', response.headers['content-type']);
+    // .on('response', (response) => {
+    //   console.log('Response Status Code: ', response.statusCode);
+    //   console.log('Response Message: ', response.statusMessage);
+    //   console.log('Response Content Type: ', response.headers['content-type']);
+    // })
+    .on('end', () => {
+      console.log(`Downloaded avatar from: ${url}`);
     })
     .pipe(fs.createWriteStream(filePath));
 }
 
 const getAvatar = (err, data) => {
-  console.log(err);
+  if (err) {
+    console.log(err);
+  }
   data.map((obj) => {
     const file = `./avatars/${obj.login}.jpg`;
     const url = obj.avatar_url;
